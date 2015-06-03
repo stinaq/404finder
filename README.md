@@ -7,6 +7,6 @@ cd [place for github repo]
 
 pip install virtualenv
 virtualenv .
-# (pip install requests)
+(pip install requests)
 
 pip install -r requirements.txt
