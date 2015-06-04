@@ -7,6 +7,7 @@ cd [place for github repo]
 
 pip install virtualenv   
 virtualenv .   
+. bin/activate (Source\activate)s
 # (pip install requests)   
 
 pip install -r requirements.txt
