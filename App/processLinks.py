@@ -23,6 +23,7 @@ def visit_links(list_of_links):
 
         except requests.exceptions.RequestException as e:
             # catastrophic error. fail.
+            print "It's likely that this domain doesn't exists anymore."
             print e
     write_to_file(bad_links, get_file_path())
 
@@ -37,7 +38,7 @@ def get_file_path():
 def write_to_file(link_objects, file_directory):
 
     # time to make file anme unique
-    current_datetime = strftime("%Y%m%d_%H-%M", gmtime())
+    current_datetime = strftime("%Y%m%d_%H-%M-%S", gmtime())
 
     # adding a as second parameter to open means append to the end of file.
     file_object = open(file_directory + '\\brokenLinks' + current_datetime + '.txt', 'a')
@@ -57,4 +58,4 @@ listOfLinks = [{'url':'http://google.com/lxfjdklj', 'title':'Google'},{'url':'ht
 #path = enterFilePath()
 #print path
 #WriteToFile("Teeest!", "http://url.se", path)
-visit_links(listOfLinks)
+#visit_links(listOfLinks)
