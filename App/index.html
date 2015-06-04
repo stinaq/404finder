@@ -1,0 +1,854 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>StinaQ.me</title>
+    <meta name="author" content="Stina Qvarnström">
+
+
+    <meta name="description" content="Apr 13th, 2015 CSS, Display Table, Positioning CSS Vertical Align or: How I Learned to Stop Worrying and Love Display: Table I grew up with it and &hellip;">
+
+
+      <!-- http://t.co/dKP3o1e -->
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="/atom.xml" rel="alternate" title="StinaQ.me" type="application/atom+xml">
+
+    <link rel="canonical" href="http://stinaq.me/">
+    <link href="/favicon.png" rel="shortcut icon">
+    <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,700' rel='stylesheet' type='text/css'>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/javascripts/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="/javascripts/fancybox/jquery.fancybox.css" />
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(".fancybox").fancybox();
+        });
+    </script>
+
+<script type="text/javascript">
+$('.image').fancybox({
+  padding: 0,
+  helpers: {
+    overlay: {
+      locked: false
+    }
+  }
+});
+    </script>
+
+    <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+</head>
+
+
+<body>
+    <div class="container">
+        <div class="left-col">
+            <div class="intrude-less">
+            <header id="header" class="inner"><div class="profilepic">
+    <script src="/javascripts/md5.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+        });
+    </script>
+</div>
+<hgroup>
+  <h1><a href="/">StinaQ.me</a></h1>
+
+    <h2>..</h2>
+
+</hgroup>
+
+<nav id="main-nav"><ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/portfolio">Portfolio</a></li>
+</ul>
+
+</nav>
+<nav id="sub-nav">
+    <div class="social">
+
+
+
+
+        <a class="github" href="https://github.com/stinaq" title="GitHub">GitHub</a><br>
+
+
+
+
+
+
+
+
+        <a class="rss" href="/atom.xml" title="RSS">RSS</a><br>
+
+    </div>
+</nav>
+</header>
+            </div>
+        </div>
+        <div class="mid-col">
+
+
+
+            <div class="mid-col-container">
+                <div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+
+
+
+<time datetime="2015-04-13T16:59:00+02:00" data-updated="true" itemprop="datePublished">Apr 13<span>th</span>, 2015</time></div>
+        <div class="tags">
+
+
+    <a class='category' href='/blog/categories/css/'>CSS</a>, <a class='category' href='/blog/categories/display-table/'>Display Table</a>, <a class='category' href='/blog/categories/positioning/'>Positioning</a>
+
+
+</div>
+
+    </div>
+    <h1 class="title" itemprop="name"><a href="/blog/2015/04/13/css-vertical-align-or-how-i-learned-to-stop-worrying-and-love-display-table/" itemprop="url">CSS Vertical Align or: How I Learned to Stop Worrying and Love Display: Table</a></h1>
+    <div class="entry-content" itemprop="articleBody">
+        <p>I grew up with it and it&rsquo;s hard to shake. It follows me around, looking over my shoulder everytime I try to position anything. That deeply ingrained hatred of tables. Nothing was as ugly and disgraceful as using tables to position content (that and maybe using capital letters for your tags).</p>
+
+<blockquote><ul>
+<li>What, are you not using THE BOX MODEL? I can&rsquo;t work like this.</li>
+</ul>
+</blockquote>
+
+<p>I sometimes sit and glare longingly at those at the office that don&rsquo;t have to support the older versions of IE. Imagine the glory and wonder of using Flexbox! To be able to roll around in <code>align-items: center</code>, revel in <code>justify-content</code> and delight in <code>flex width</code>. But, alas. It is not so, using flexbox for corporate oriented (especially SharePoint) styling is still some years off.</p>
+
+<p>But I still have to vertically align things all the time. And that&rsquo;s the reason for this post. Yes, it is true. I have started to use tables to get things to where I want them. Not actual tables, but virtual ones with div and span elements with display table. And I have come to, maybe not love it, but at least rather like it. It sort of works, if used correctly. There is a learning curve, an especially steep one if your brain is telling you to RUN AWAY. But with some time and determination you too can get there.</p>
+
+<h2>The problem to solve</h2>
+
+<p><img src="https://dl.dropboxusercontent.com/u/16864288/blogg/verticle-align-with-table2.PNG"></p>
+
+<p>Typically we&rsquo;re talking about an icon that should be centered vertically to a text of unspecified height. <code>Position: absolute</code> won&rsquo;t help you here, nor will margin top, since the height varies. What I used to do was use a background image with background-position: center. But these days we have to take retina screens into account. Begone blurry images!</p>
+
+<blockquote><p>But what about svg?</p></blockquote>
+
+<p>says you.</p>
+
+<p>Yes, that would also be nice, but legacy systems prevent me from using that (long story, SharePoint is to blame). Also I would like to utilize icon libraries like <a href="https://fortawesome.github.io/Font-Awesome/">FontAwesome</a>.</p>
+
+<h2>The solution</h2>
+
+<p>Use table layout for this!
+The wrapping parent gets:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>display: table;
+</span><span class='line'>padding: 10px; // For good looks</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And then every child element gets</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>display: table-cell;
+</span><span class='line'>vertical-align: middle;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And no padding or margin top or bottom on the children, that messes everything up. Both child elements now becomes as high as the highest of them, and the content is placed in the vertical middle. Magic.</p>
+
+<p><img src="https://dl.dropboxusercontent.com/u/16864288/blogg/verticle-align-with-table1.PNG"></p>
+
+<p>Want a clearer picture and try it out yourself? <a href="http://plnkr.co/edit/t319jK5ThJ3mDPtoQ6ak?p=preview">Here&rsquo;s a plunker where you can do that</a>.</p>
+
+<h2>So you tried this and there&rsquo;s no magic?</h2>
+
+<p>The problem with this method is that it&rsquo;s mad hard to &ldquo;debug&rdquo;. It&rsquo;s insanely difficult to understand what&rsquo;s wrong when something is off in the aligning. Try to remove all set height, line-height and margins and paddings on the child elements, as well as all other positioning styling (relative or absolute).</p>
+
+<h2>Nothing new under the sun</h2>
+
+<p>Yes, people have of course used this before, but that doesn&rsquo;t mean everyone has, or that it isn&rsquo;t news to someone. After all, until recently I didn&rsquo;t use it and I spend a fairly large amount of my day arguing with CSS.</p>
+
+
+
+    </div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+
+
+
+<time datetime="2014-11-22T10:00:00+01:00" data-updated="true" itemprop="datePublished">Nov 22<span>nd</span>, 2014</time></div>
+        <div class="tags">
+
+
+    <a class='category' href='/blog/categories/geek-girl-meetup/'>Geek Girl Meetup</a>, <a class='category' href='/blog/categories/tutorial/'>Tutorial</a>
+
+
+</div>
+
+    </div>
+    <h1 class="title" itemprop="name"><a href="/blog/2014/11/22/how-to-create-a-webapp-in-15-minutes/" itemprop="url">How to Create a Webapp in 15 Minutes</a></h1>
+    <div class="entry-content" itemprop="articleBody">
+        <p>If you came to this post because we met at the Geek Girl Meetup, I&rsquo;m so, so glad to see you. My goal was to inspire at least one person to actually try this out and get started with creating webapps by using Yeoman. It would make me feel really warm inside that I actually inspired someone to get started and try it out.</p>
+
+<p>If you just stumbled in here by yourself, this is a post where I list the few and wonderously simple steps to generate a webapp to use for web development using Yeoman.</p>
+
+<h1>The steps</h1>
+
+<h2>Install nodejs</h2>
+
+<p>Go to <a href="http://nodejs.org">nodejs.org</a> to download Node. Install it on your computer.</p>
+
+<h2>Test Node Package manager</h2>
+
+<p>Open your terminal (if you&rsquo;re on a Mac), or your Power Shell if you&rsquo;re on a Windows. Don&rsquo;t know how to do this? Don&rsquo;t worry, <a href="http://blog.teamtreehouse.com/introduction-to-the-mac-os-x-command-line">here is a great guide for Mac</a>, and <a href="http://technet.microsoft.com/en-us/library/hh847889.aspx">here is a great guide for Windows</a>. You don&rsquo;t need to know more than how to open it, and think of how cool you&rsquo;ll look now!</p>
+
+<p>With it open, type in</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>npm</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Press enter. That&rsquo;s it. You get a response that says stuff about how npm works. Moving on to the next step!</p>
+
+<h2>Install Git</h2>
+
+<p>Git needs to be installed in order to get some other things (Bower) working. Go to <a href="http://git-scm.com/downloads">http://git-scm.com/downloads</a>, download and install.</p>
+
+<h2>Install Yeoman</h2>
+
+<p><a href="http://yeoman.io">Yeoman</a> is a program that helps you generate skeletons for your future web page or web application. Install it by typing this into your terminal/Power Shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>npm install -g yo</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This installs Yeoman on your computer (the -g part makes sure it&rsquo;s installed everwhere). If you want to know more about how Yeoman works, <a href="http://yeoman.io/learning/index.html">this is a good place to start</a>.</p>
+
+<h2>Install Bower</h2>
+
+<p><a href="http://bower.io">Bower</a> helps you out with dependencies such as jQuery or Bootstrap or something else. Install it by typing:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>npm install -g bower</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Interested in what you can do with Bower, visit <a href="http://code.tutsplus.com/tutorials/meet-bower-a-package-manager-for-the-web--net-27774">this guide</a>.</p>
+
+<h2>Install Grunt</h2>
+
+<p><a href="http://gruntjs.com">Grunt</a> is what you call a &ldquo;task runner&rdquo;. It does tasks for you, like minifying CSS and JavaScript, or compiling Sass, or copying files from one place to another. Let&rsquo;s install it by typing:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>npm install -g grunt-cli</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you want more about what Grunt can do for you, go <a href="http://www.smashingmagazine.com/2013/10/29/get-up-running-grunt/">this guide</a>, which explains it nicely.</p>
+
+<h2>Install Webapp generator</h2>
+
+<p>Now we&rsquo;re at the last installation step, which is to install one of Yeomans&#8217; generators, namely <a href="https://github.com/yeoman/generator-webapp">Webapp</a>. It&rsquo;s a generator that creates a bunch of files and folders containing all you need for your future project. Type</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>npm install -g generator-webapp</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Webapp is the most general generator from Yeoman, but there are a <a href="http://yeoman.io/generators/">bunch of others</a>.</p>
+
+<h2>Create project folder</h2>
+
+<p>Now it&rsquo;s time to create a folder where your project will live. Either create it in finder/explorer, or look cool by doing it in your teminal/Power Shell:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mkdir my-fancy-project</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Then you have to move your terminal/Poweer Shell to your new folder. This is done by the command <code>cd</code> which stands for &lsquo;change directory&rsquo;. Type in:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd my-fancy-project</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Generate your project</h2>
+
+<p>Now the time has come for a project to be created, finally! And all you have to do is type:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>yo webapp</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And after you pressed enter all the files and folders and content will be created, it&rsquo;s almost like magic.</p>
+
+<h2>Start up your web application in the browser</h2>
+
+<p>Once it&rsquo;s finished, type</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>grunt serve</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This starts up the task manager Grunt, which opens your browser, with the web site on it.</p>
+
+<h2>Then what?</h2>
+
+<p>So that&rsquo;s all you need to do, now you can start creating. That&rsquo;s not always easy, but it&rsquo;s loads more fun than writing boring HTML and creating folders and so on, which all these steps have done for you.</p>
+
+<p>I made the <a href="http://www.countingdown.nu">Counting Down site</a> by using a generator from Yeoman. You can add some JavaScript to the generated JavaScript file to create something that tells time, or just says hello, or shows flash cards from your anatomy class at school, or something entirely different.</p>
+
+<p>It would make me happy if you mailed me at <a href="&#109;&#x61;&#x69;&#x6c;&#116;&#x6f;&#x3a;&#115;&#116;&#105;&#x6e;&#97;&#113;&#x76;&#x40;&#x67;&#109;&#x61;&#x69;&#x6c;&#x2e;&#99;&#111;&#x6d;">&#115;&#x74;&#105;&#110;&#97;&#113;&#118;&#64;&#103;&#x6d;&#x61;&#105;&#x6c;&#46;&#99;&#x6f;&#109;</a> with questions, tales or thoughts about this. I hope that you try it out and see where it takes you.</p>
+
+
+
+    </div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+
+
+
+<time datetime="2014-11-03T11:50:00+01:00" data-updated="true" itemprop="datePublished">Nov 3<span>rd</span>, 2014</time></div>
+        <div class="tags">
+
+
+    <a class='category' href='/blog/categories/geek-girl-meetup/'>Geek Girl Meetup</a>
+
+
+</div>
+
+    </div>
+    <h1 class="title" itemprop="name"><a href="/blog/2014/11/03/trying-to-prepare-myself-for-delivering-a-talk/" itemprop="url">Trying to Prepare Myself for Delivering a Talk</a></h1>
+    <div class="entry-content" itemprop="articleBody">
+        <p>I&rsquo;m starting to get slightly nervous now. Decided that I was going to hold a talk at <a href="http://geekgirlmeetup.com/oresund/">Geek Girl Meetup Oresund</a> and now I have to do it. Since I seems to be unable to hold lectures and lessons without knowing monumentally more than what I&rsquo;m actually going to talk about, I have quite a lot of work to do.</p>
+
+<p>I have named the talk &ldquo;How to go from idea to webapp in 15 minutes&rdquo;, or something like it, and it is about how to set up grunt, SASS, and JavaScript structure in under 20 minutes. And also, the will be pictures of kittens, probably.</p>
+
+<p>I hope someone shows up and I hope I do great and that the kittens are cute.</p>
+
+
+
+    </div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+
+
+
+<time datetime="2014-09-24T22:06:00+02:00" data-updated="true" itemprop="datePublished">Sep 24<span>th</span>, 2014</time></div>
+        <div class="tags">
+
+
+    <a class='category' href='/blog/categories/css/'>CSS</a>, <a class='category' href='/blog/categories/code-snippets/'>Code snippets</a>, <a class='category' href='/blog/categories/sass/'>SASS</a>
+
+
+</div>
+
+    </div>
+    <h1 class="title" itemprop="name"><a href="/blog/2014/09/24/a-mixin-for-everything-and-all-on-retina-screens/" itemprop="url">A Mixin for Everything and All on Retina Screens</a></h1>
+    <div class="entry-content" itemprop="articleBody">
+        <p><em>Problem:</em> You have styles you want for regular screens, and styles you want for retina screens. Mostly images with different sizes, but sometimes font sizes or widths.</p>
+
+<p>I was faced with this recently and got annoyed at the amount of repeating I had to do. First it&rsquo;s the fuck ugly syntax of the media queries, then it&rsquo;s the browser compatibility, and then I have to repeat it all over my Sass document for different screen sizes and everything else that can change</p>
+
+<h2>Queue trying to build a handy mixin for it all</h2>
+
+<p>This is what I came up with:</p>
+
+<pre><code>@mixin retinaspecific($maxwidth, $attribute, $value) {
+    @media
+        only screen and (-webkit-min-device-pixel-ratio: 2) and (max-width: $maxwidth),
+        only screen and ( min--moz-device-pixel-ratio: 2) and (max-width: $maxwidth),
+        only screen and ( -o-min-device-pixel-ratio: 2/1) and (max-width: $maxwidth),
+        only screen and ( min-device-pixel-ratio: 2) and (max-width: $maxwidth),
+        only screen and ( min-resolution: 192dpi) and (max-width: $maxwidth),
+        only screen and ( min-resolution: 2dppx) and (max-width: $maxwidth) {
+        #{$attribute}: $value;
+    }
+}
+</code></pre>
+
+<p>It&rsquo;s a mixin that takes three arguments. The first ($maxwidth) handles the actual media query and when the rule should be applied. The second ($attribute) handles what <em>attribute</em> is affected. Here you put font-size, background-image or something like it. And the last one handles the value of the attribute, so what size should the font be, or what background image do you want.</p>
+
+<p>It is quite handy! Just use it whenever you want something styled for a retina screen. Since you can reuse it for all attributes and screen sizes, it shourtens the code you have to write quite a lot.</p>
+
+<p>Using it like this:</p>
+
+<pre><code>@include retinaspecific(500px, min-width, 55px);
+</code></pre>
+
+<p>Will compile to this:</p>
+
+<pre><code>@media
+    only screen and (-webkit-min-device-pixel-ratio: 2) and (max-width: 500px),
+    only screen and (min--moz-device-pixel-ratio: 2) and (max-width: 500px),
+    only screen and (-o-min-device-pixel-ratio: 2 / 1) and (max-width: 500px),
+    only screen and (min-device-pixel-ratio: 2) and (max-width: 500px),
+    only screen and (min-resolution: 192dpi) and (max-width: 500px),
+    only screen and (min-resolution: 2dppx) and (max-width: 500px) {
+        min-width: 55px;
+}
+</code></pre>
+
+<p>I used it for my app <a href="http://countingdown.nu">Counting Down</a> and as far as I know it doesn&rsquo;t work in LESS</p>
+
+
+
+    </div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+
+
+
+<time datetime="2014-02-17T14:12:00+01:00" data-updated="true" itemprop="datePublished">Feb 17<span>th</span>, 2014</time></div>
+        <div class="tags">
+
+
+    <a class='category' href='/blog/categories/css/'>CSS</a>, <a class='category' href='/blog/categories/less/'>LESS</a>, <a class='category' href='/blog/categories/tutorial/'>Tutorial</a>
+
+
+</div>
+
+    </div>
+    <h1 class="title" itemprop="name"><a href="/blog/2014/02/17/how-to-select-all-elements-except-a-pseudo-element-using-css-and-less/" itemprop="url">How to Select All Elements Except a Pseudo Element Using CSS and LESS</a></h1>
+    <div class="entry-content" itemprop="articleBody">
+        <p>This may not be the easiest way to achieve this results, but I wanted to share it because it was genuinely awesome.</p>
+
+<p>I wanted to put a bottom margin on all elements, except the last one, and I wanted to do it using nested LESS-syntax. Sure, I could just write two rules, one that put the bottom margin on all elements, and one that removed it on the last child. Like this:</p>
+
+<pre><code>.content {
+  margin-bottom: 30px;
+  &amp;:last-child {
+    margin-bottom: 0;
+  }
+}
+</code></pre>
+
+<p>But where&rsquo;s the fun in that? No learning = no fun.</p>
+
+<p>I couldn&rsquo;t wrap my head around it, so I turned to StackOverflow and got exactly the kind of <a href="http://stackoverflow.com/questions/20631212/less-nested-rule-for-selecting-all-except-a-pseudo-element">answer I wanted</a>. User <a href="http://stackoverflow.com/users/106224/boltclock">BoltClock</a> explained and here&rsquo;s what I learned:</p>
+
+<p>What I wanted to do was to select all elements that were children of <code>.content</code>, but not the last one, so I had to select all children with the child selector <code>&gt;</code> , then single out the last one with <code>:last-child</code> and put it in the <code>:not</code>-selector. Like this:</p>
+
+<pre><code>.content {
+  &gt; :not(:last-child) {
+    margin-bottom: 30px;
+  }
+}
+</code></pre>
+
+<p>Which in its turn compiled to:</p>
+
+<pre><code>.content &gt; :not(:last-child) {
+  margin-bottom: 30px;
+}
+</code></pre>
+
+<p>In the end I had to abandon it because there was an IE8 requirement in place. IE8 causes so much sadness.</p>
+
+
+
+    </div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+
+
+
+<time datetime="2014-01-15T14:01:00+01:00" data-updated="true" itemprop="datePublished">Jan 15<span>th</span>, 2014</time></div>
+        <div class="tags">
+
+
+    <a class='category' href='/blog/categories/close-to-home/'>Close to home</a>, <a class='category' href='/blog/categories/personal/'>Personal</a>
+
+
+</div>
+
+    </div>
+    <h1 class="title" itemprop="name"><a href="/blog/2014/01/15/sometimes-stuff-happens/" itemprop="url">Sometimes Stuff Happens</a></h1>
+    <div class="entry-content" itemprop="articleBody">
+        <p>I woke up one morning and didn&rsquo;t care anymore. Didn&rsquo;t feel anything when I thought about my future. Didn&rsquo;t feel anything when I looked at people i knew I loved. It felt like the resonance I had felt in my chest when I looked at someone I loved was gone. It was like all feelings had disappeared. Except for fear. I got so scared that I panicked, and pressed myself against a wall and knew that I couldn&rsquo;t survive this. There was no way I could feel like this and live through it. I was so scared.</p>
+
+<p>This had happened before, but this time there was someone with me who knew that help could be gotten. And we did. I never pictured myself going to the psyciartic emergency room, but there I was. It was everything I expected it to be. Ugly. Run down. Sad. But then it wasn&rsquo;t. Because there were people there who cared and knew how to help. They were concerned and I got medicine. I got sedatives and my self image changed. Now I was the kind of person who needed sedatives. And they were awesome. And I got antidepressants and it made it worse. It got so bad that there were times when I literally couldn&rsquo;t stand on my own. At times I forgot to breathe. Apparently that&rsquo;s how the medicine works. It makes it worse to be able to make it better.</p>
+
+<p>And it got better, but man it was slow. So slow that I didn&rsquo;t notice it. I had to force myself to wake up early and go running in the mornings and I&rsquo;m so glad I did, I think it helped a lot. I figured out that the most difficult I could do was to be bored and be okay with it, when my mind wasn&rsquo;t occupied it wandered away and always ended up in the worst &ldquo;what if&rdquo; it could find. Scumbag brain. So I played Minecraft and watched Lord of the Rings&#8217; extra material.</p>
+
+<p>And one day I woke up and it was fine. Only it wasn&rsquo;t one day suddenly, it snuck in under the radar. I could feel love, I could feel happiness and I could think about the future without panic.</p>
+
+<p>I hate you panic, but you helped me learn a lot about my brain and how it works. How it can&rsquo;t always be trusted. That it sometimes makes stuff up just so that it can release some of the fear. I know that five people with the same length of shorts in a group aren&rsquo;t dangerous, but when my brain was sick it couldn&rsquo;t find any lions in its vicinity so it took the next best thing. People in shorts. Or christmas lights in the summer.</p>
+
+<p>And even though it was aweful and I didn&rsquo;t think I could survive, I did. I realized I am stronger than I realize and that medication really can help. They don&rsquo;t change you, they don&rsquo;t make you happy, but they do help you not panicking and getting up in the morning. In the long run it was probably a period that helped me grow. I learned that sometimes, when something seems absolutely impossible, it is the brain that fools me into hopelessness. I learned not to trust myself at times when I didn&rsquo;t make any sense. And I learned that I could take help and that sadness, depression and panic doesn&rsquo;t describe who I am. I got sick and I got better. It is a disease and it can be treated, even though the future hopefully will bring medicine with less side effects. I am not defined by my sadness and I can be content.</p>
+
+<p>Thank you Erik, for all the help. I love you</p>
+
+
+
+    </div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+
+
+
+<time datetime="2013-11-21T10:11:00+01:00" data-updated="true" itemprop="datePublished">Nov 21<span>st</span>, 2013</time></div>
+        <div class="tags">
+
+
+    <a class='category' href='/blog/categories/awesomeness-in-others/'>Awesomeness in others</a>
+
+
+</div>
+
+    </div>
+    <h1 class="title" itemprop="name"><a href="/blog/2013/11/21/the-cursor-monster/" itemprop="url">The Cursor Monster</a></h1>
+    <div class="entry-content" itemprop="articleBody">
+        <p>The cursor monster is awesome. Feed him!</p>
+
+<p><a href="http://www.liveweave.com/2udm1S">Feed the cursor monster</a></p>
+
+
+
+    </div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+
+
+
+<time datetime="2013-11-20T08:33:00+01:00" data-updated="true" itemprop="datePublished">Nov 20<span>th</span>, 2013</time></div>
+        <div class="tags">
+
+
+    <a class='category' href='/blog/categories/girls-in-tech/'>Girls in tech</a>, <a class='category' href='/blog/categories/shout-out/'>Shout out</a>
+
+
+</div>
+
+    </div>
+    <h1 class="title" itemprop="name"><a href="/blog/2013/11/20/i-really-hope-goldieblox-becomes-a-thing/" itemprop="url">I Really Hope GoldieBlox Becomes a Thing</a></h1>
+    <div class="entry-content" itemprop="articleBody">
+        <p>Doing the short and tiny thing again and giving a shout out to <a href="http://www.goldieblox.com/">GoldieBlox</a>, a toy that I hope will conquer the world. This is from their homepage:</p>
+
+<blockquote><p>At GoldieBlox, our goal is to get girls building. We’re here to help level the playing field in every sense of the phrase. By tapping into girls&#8217; strong verbal skills, our story + construction set bolsters confidence in spatial skills while giving young inventors the tools they need to build and create amazing things.</p></blockquote>
+
+<p>Basically it&rsquo;s a toy for girls that&rsquo;s about creating and thinking to inspire them to do stuff themselves. Awesome!</p>
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/y-AtZfNU3zw" frameborder="0" allowfullscreen></iframe>
+
+
+
+
+    </div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+
+
+
+<time datetime="2013-10-03T13:15:00+02:00" data-updated="true" itemprop="datePublished">Oct 3<span>rd</span>, 2013</time></div>
+        <div class="tags">
+
+
+    <a class='category' href='/blog/categories/host-file/'>Host file</a>, <a class='category' href='/blog/categories/tutorial/'>Tutorial</a>
+
+
+</div>
+
+    </div>
+    <h1 class="title" itemprop="name"><a href="/blog/2013/10/03/how-to-lead-a-computer-astray-on-the-world-wide-web/" itemprop="url">How to Lead a Computer Astray on the World Wide Web</a></h1>
+    <div class="entry-content" itemprop="articleBody">
+        <h2>In other words: How to troll your friends&#8217; computers</h2>
+
+<p>This is a guide on how you edit the host-file in order to map a domain to an ip-address.</p>
+
+<p>When you type in a domain name, such as <a href="http://www.timflach.com/">www.timflach.com</a>, you are actually being redirected to an IP-address. Around the world there are important computers that know what IP-address is mapped to what domain name. These are called DNS servers. They are updated when a domain name gets moved and real autorities on where web sites are located.</p>
+
+<p>But, before your browser travels out into the world to collect information from the DNS servers it actually asks someone else. Or rather, it looks in your host file.</p>
+
+<p>The host file is located in c:\windows\system32\drivers\etc\hosts (on Unix, /etc/hosts) and can contain information on where domain names lead. In it you can add pairs of domain names &lt;&ndash;> IP-adresses to say that if a user types a specific domain name, the browser should be redirected to a particular IP. For example you can add the IP
+50.112.105.59 to the domain minecraft.net.</p>
+
+<h3>Here is how you edit the host file!</h3>
+
+<p>Open the file. You might need to do so as an administrator. I found that the easiest way was to type</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>notepad c:\windows\system32\drivers\etc\hosts</span></code></pre></td></tr></table></div></figure>
+
+
+<p>after you&rsquo;ve opened Windows&#8217; metro mode and then right click &mdash;> open as administrator.</p>
+
+<p>You will now see a file that looks somewhat like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ps1'><span class='line'><span class="c"># Copyright (c) 1993-2009 Microsoft Corp.</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># This is a sample HOSTS file used by Microsoft TCP/IP for Windows.</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># This file contains the mappings of IP addresses to host names. Each</span>
+</span><span class='line'><span class="c"># entry should be kept on an individual line. The IP address should</span>
+</span><span class='line'><span class="c"># be placed in the first column followed by the corresponding host name.</span>
+</span><span class='line'><span class="c"># The IP address and the host name should be separated by at least one</span>
+</span><span class='line'><span class="c"># space.</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># Additionally, comments (such as these) may be inserted on individual</span>
+</span><span class='line'><span class="c"># lines or following the machine name denoted by a &#39;#&#39; symbol.</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c"># For example:</span>
+</span><span class='line'><span class="c">#</span>
+</span><span class='line'><span class="c">#      102.54.94.97     rhino.acme.com          # source server</span>
+</span><span class='line'><span class="c">#       38.25.63.10     x.acme.com              # x client host</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># localhost name resolution is handled within DNS itself.</span>
+</span><span class='line'><span class="c">#    127.0.0.1       localhost</span>
+</span><span class='line'><span class="c"># ::1             localhost</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And here is where you can add your own customization. Write the line</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='powershell'><span class='line'><span class="n">178</span><span class="p">.</span><span class="n">79</span><span class="p">.</span><span class="n">143</span><span class="p">.</span><span class="n">210</span>        <span class="n">minecraft</span><span class="p">.</span><span class="n">net</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>save, visit the domain namne in your browser and see what happens.</p>
+
+<p>When is this useful, except for trolling your little brother? Say, for example that you are located on a network where you can&rsquo;t access certain domain names without typing the IP-address. Now you can create your own way around that!</p>
+
+
+
+    </div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="meta">
+        <div class="date">
+
+
+
+
+
+
+
+
+
+
+
+<time datetime="2013-09-24T21:52:00+02:00" data-updated="true" itemprop="datePublished">Sep 24<span>th</span>, 2013</time></div>
+        <div class="tags">
+
+
+    <a class='category' href='/blog/categories/awesomeness-in-others/'>Awesomeness in others</a>
+
+
+</div>
+
+    </div>
+    <h1 class="title" itemprop="name"><a href="/blog/2013/09/24/get-lost-in-a-rainy-day/" itemprop="url">Get Lost in a Rainy Day</a></h1>
+    <div class="entry-content" itemprop="articleBody">
+        <p>I thought I try something new and actually save and post about cool, fun and amazing things I found on the world wide web. Hopefully it will be a recurring thing. First thing out is Rainyday</p>
+
+<blockquote><p><a href="https://github.com/maroslaw/rainyday.js">Rainyday</a> is a JavaScript library that simulates rain falling on a glass surface</p></blockquote>
+
+<p>Go check out the demos, I got stuck staring at them.</p>
+
+<ul>
+<li><a href="http://maroslaw.github.io/rainyday.js/demo1.html">Demo 1</a></li>
+<li><a href="http://maroslaw.github.io/rainyday.js/demo2.html">Demo 2</a></li>
+</ul>
+
+
+
+
+    </div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+
+
+        <a href="/blog/page/2/" class="next">Next</a>
+
+    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+</nav></div>
+            </div>
+            <footer id="footer" class="inner"><p>
+  Copyright &copy; 2015 - Stina Qvarnström -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-36459920-1']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+    </script>
+
+
+
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+        </div>
+    </div>
+</body>
+</html>
