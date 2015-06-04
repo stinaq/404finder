@@ -67,3 +67,6 @@ pyvenv.cfg
 pip-selfcheck.json
 
 *.gz
+
+# Project specific
+/output
