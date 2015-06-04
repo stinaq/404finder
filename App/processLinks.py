@@ -7,40 +7,54 @@ from requests.auth import HTTPBasicAuth
 #headers = {'accept': 'application/json;odata=verbose'}
 #r = requests.get('http://dev/', auth=HTTPBasicAuth('booldevlocal\\administrator', 'Booldev1'))
 
-#print r.json()["d"]["Title"]
 #print r
 
-def visitLinks(listOfLinks):
-    for link in listOfLinks:
+def visit_links(list_of_links):
+    bad_links = []
+
+    for link in list_of_links:
         print link
         try:
             response = requests.get(link['url'])
             print response.status_code
+
             if(response.status_code == 404):
-                writeToFile(link, enterFilePath())
+                bad_links.append(link)
+
         except requests.exceptions.RequestException as e:
-            # catastrophic error. bail.
+            # catastrophic error. fail.
             print e
+    write_to_file(bad_links, get_file_path())
 
 
-def enterFilePath():
-    filePath = os.path.expanduser('~\Desktop')
-   # filePath  = raw_input("Enter desired file destination: ")
-    return filePath
+def get_file_path():
+    # Dafult path to user desktop
+    file_path = os.path.expanduser('~\Desktop')
+    # filePath  = raw_input("Enter desired file destination: ")
+    return file_path
 
 
-def writeToFile(linkObject, fileDirectory):
+def write_to_file(link_objects, file_directory):
+
+    # time to make file anme unique
+    current_datetime = strftime("%Y%m%d_%H-%M", gmtime())
+
     # adding a as second parameter to open means append to the end of file.
-    #fileObject = open('C:\Users\Administrator\Desktop\Output.txt','a')
-    currentDatetime = strftime("%Y%m%d_%H-%M-%S", gmtime())
-    fileObject = open(fileDirectory + '\\brokenLinks' + currentDatetime + '.txt', 'a')
-    fileObject.write(linkObject['title'] + '    ' + linkObject['url'] +' \n')
-    fileObject.close()
+    file_object = open(file_directory + '\\brokenLinks' + current_datetime + '.txt', 'a')
+
+    for link in link_objects:
+
+        #substring title 30 characters
+        title = link['title'][:29]
+
+        #format output in columns
+        file_object.write('{0:30}   {1:30}'.format(title, link['url']) + ' \n')
+    file_object.close()
 
 
-listOfLinks = [{'url':'http://google.com/lxfjdklj', 'title':'Google'}, {'url':'http://jioijoj.com', 'title':'joijoj'}, {'url':'http://svt.se', 'title':'Svt'}]
+listOfLinks = [{'url':'http://google.com/lxfjdklj', 'title':'Google'},{'url':'http://google.com/dfdfgdfgfff', 'title':'Stina Qvartstrom is a girl on my job'}, {'url':'http://google.com/ogfjgiofjgi', 'title':'Malins Test'}, {'url':'http://jioijoj.com', 'title':'joijoj'}, {'url':'http://www.oppetarkiv.se//nostalgi', 'title':'Svt'}]
 
 #path = enterFilePath()
 #print path
 #WriteToFile("Teeest!", "http://url.se", path)
-visitLinks(listOfLinks)
+visit_links(listOfLinks)
