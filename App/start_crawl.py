@@ -3,6 +3,7 @@ import get_links
 import processLinks
 
 def start (url):
+    # Starting point, at least so far
     domain = 'http://stinaq.se'
     r = requests.get(url)
     full_html = r.text
