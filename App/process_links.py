@@ -6,6 +6,10 @@ from requests.auth import HTTPBasicAuth
 
 def visit_links(list_of_links):
     bad_links = []
+broken_links = []
+links_to_crawl = []
+links_to_other_domains = []
+domain = 'http://stinaq.se'
 
     for link in list_of_links:
         print link
