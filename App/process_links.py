@@ -5,9 +5,11 @@ import datetime
 from time import gmtime, strftime
 from requests.auth import HTTPBasicAuth
 from urlparse import urlparse
+from bs4 import BeautifulSoup
 
 broken_links = []
 links_to_crawl = []
+crawled_urls = []
 links_to_other_domains = []
 root_domain = 'http://stinaq.se/'
 
@@ -76,12 +78,81 @@ def write_to_file(link_objects):
         file_object.write('{0:30}   {1:30}'.format(title, link['url']) + ' \n')
     file_object.close()
 
-def start (url):
-    # Starting point, at least so far
+def make_absolute_of_relative(url, domain):
+    # If the urls are relative, they should be made absolute, using the given domain
+    if url.startswith('/'):
+        return domain + url
+    return url
+
+def find_all_links(html, origin):
+    soup = BeautifulSoup(html)
+    # Get all a tags on the given html page
+    a_tags = soup.find_all('a')
+    linkObjects = []
+    for a_tag in a_tags:
+        # Get the urls and content of the a tags and save them as object in a list
+        url = a_tag.get('href', '')
+        title = ''.join(a_tag.get_text("|", strip=True)).encode('utf-8')
+
+        absolute_url = make_absolute_of_relative(url, root_domain)
+
+        temp = {}
+        temp['url'] = absolute_url
+        temp['title'] = title
+        temp['origin'] = origin
+
+        linkObjects.append(temp)
+    return linkObjects
+
+def crawl(link):
+    url = link['url']
+    if url in crawled_urls and url in [u['url'] for u in broken_links]:
+        broken_links.append(link)
+        return
+    elif url in crawled_urls:
+        return
+
     r = requests.get(url)
-    full_html = r.text
-    all_links = get_links.find_all_links(full_html, root_domain)
+    if not r.ok:
+        broken_links.append(link)
+        return
 
-    visit_links(all_links)
+    crawled_urls.append(url)
+    links_to_crawl.extend(find_all_links(r.text, url))
 
-start('http://stinaq.se/2015/06/en-sidan-med-massa-trasiga-lankar/')
+def check(link):
+    try:
+        r = requests.head(link['url'])
+        if not r.ok:
+            broken_links.append(link)
+    except requests.exceptions.ConnectionError as e:
+        broken_links.append(link)
+
+def start ():
+    # Starting point, at least so far
+    while links_to_crawl:
+        link = links_to_crawl.pop()
+        if link['url'].startswith('#'):
+            pass
+        elif root_domain in link['url']:
+            print 'link on same domain'
+            print link
+            crawl(link)
+        else:
+            print 'link on another domain'
+            print link
+            check(link)
+
+        # try:
+        # crawl(links_to_crawl.pop())
+        # except:
+            # print broken_links
+
+
+links_to_crawl.append({'url':'http://stinaq.se/2015/06/en-sidan-med-massa-trasiga-lankar/','title':'','origin':'root'})
+
+try:
+    start()
+    write_to_file(br)
+except AttributeError:
+    print broken_links
