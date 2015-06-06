@@ -9,7 +9,7 @@ from urlparse import urlparse
 broken_links = []
 links_to_crawl = []
 links_to_other_domains = []
-domain = 'http://stinaq.se'
+root_domain = 'http://stinaq.se/'
 
 def url_is_of_same_domain(url):
     parsed_uri = urlparse(url)
@@ -80,7 +80,7 @@ def start (url):
     # Starting point, at least so far
     r = requests.get(url)
     full_html = r.text
-    all_links = get_links.find_all_links(full_html, domain)
+    all_links = get_links.find_all_links(full_html, root_domain)
 
     visit_links(all_links)
 
