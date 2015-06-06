@@ -4,14 +4,14 @@ import get_links
 import datetime
 from time import gmtime, strftime
 from requests.auth import HTTPBasicAuth
-from urlparse import urlparse
+from urlparse import urlparse, urljoin
 from bs4 import BeautifulSoup
 
 broken_links = []
 links_to_crawl = []
 crawled_urls = []
 links_to_other_domains = []
-root_domain = 'http://stinaq.se/'
+root_domain = 'http://stinaq.me/'
 
 def url_is_of_same_domain(url):
     parsed_uri = urlparse(url)
@@ -48,7 +48,7 @@ def visit_link(link):
                 links_to_crawl.append(link)
             else:
                 links_to_other_domains.append(link)
-            
+
     except requests.exceptions.RequestException as e:
         # catastrophic error. fail.
         print "It's likely that this domain doesn't exists anymore."
@@ -71,11 +71,12 @@ def write_to_file(link_objects):
     file_object = open(os.path.join(dest_dir, file_name), 'a')
 
     for link in link_objects:
+        error = str(link.get('error', 'no idea'))
         #substring title 30 characters
         title = link['title'][:29]
 
         #format output in columns
-        file_object.write('{0:30}   {1:30}'.format(title, link['url']) + ' \n')
+        file_object.write('{0:30}   {1:30}'.format(title, link['url']) + error + ' \n')
     file_object.close()
 
 def make_absolute_of_relative(url, domain):
@@ -124,23 +125,43 @@ def check(link):
     try:
         r = requests.head(link['url'])
         if not r.ok:
+            link['error'] = r.status_code
             broken_links.append(link)
     except requests.exceptions.ConnectionError as e:
         broken_links.append(link)
+
+def invalid_url(url):
+    return True if url.startswith('#') or url == '' or url.startswith('mailto') else False
+
+def validate_url(url, origin):
+    parsed = urlparse(url)
+    print '=============== url'
+    print url
+    if parsed.hostname == None:
+        print '=============== hos no hostname'
+        parsed = urlparse(urljoin(origin, parsed.path))
+    print '=============== parsed'
+    print parsed.geturl()
+    return parsed.geturl()
 
 def start ():
     # Starting point, at least so far
     while links_to_crawl:
         link = links_to_crawl.pop()
-        if link['url'].startswith('#'):
+
+        url = link['url']
+        parsed_url = validate_url(url, link['origin'])
+        link['url'] = parsed_url
+
+        if invalid_url(parsed_url):
             pass
         elif root_domain in link['url']:
             print 'link on same domain'
-            print link
+            # print link
             crawl(link)
         else:
             print 'link on another domain'
-            print link
+            # print link
             check(link)
 
         # try:
@@ -149,10 +170,10 @@ def start ():
             # print broken_links
 
 
-links_to_crawl.append({'url':'http://stinaq.se/2015/06/en-sidan-med-massa-trasiga-lankar/','title':'','origin':'root'})
+links_to_crawl.append({'url':'http://stinaq.me/','title':'','origin':'root'})
 
 try:
     start()
-    write_to_file(br)
+    write_to_file(broken_links)
 except AttributeError:
     print broken_links
