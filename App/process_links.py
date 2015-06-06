@@ -1,11 +1,10 @@
 import requests
 import os
+import get_links
 import datetime
 from time import gmtime, strftime
 from requests.auth import HTTPBasicAuth
 
-def visit_links(list_of_links):
-    bad_links = []
 broken_links = []
 links_to_crawl = []
 links_to_other_domains = []
@@ -19,18 +18,26 @@ def print_all_the_things():
     print '======================== broken_links ========================'
     for link in links_to_crawl:
         print link
-        try:
-            response = requests.get(link['url'])
-            print response.status_code
 
-            if(response.status_code == 404):
-                bad_links.append(link)
+def visit_links(list_of_links):
+    for link in list_of_links:
+        visit_link(link)
 
-        except requests.exceptions.RequestException as e:
-            # catastrophic error. fail.
-            print "It's likely that this domain doesn't exists anymore."
-            print e
-    write_to_file(bad_links)
+    write_to_file(broken_links)
+    print_all_the_things()
+
+def visit_link(link):
+    try:
+        response = requests.get(link['url'])
+        if(response.status_code == 404):
+            broken_links.append(link)
+        if(response.status_code == 200):
+            links_to_crawl.append(link)
+
+    except requests.exceptions.RequestException as e:
+        # catastrophic error. fail.
+        print "It's likely that this domain doesn't exists anymore."
+        print e
 
 def write_to_file(link_objects):
     # Getting the current directory
