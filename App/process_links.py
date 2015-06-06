@@ -15,8 +15,12 @@ def print_all_the_things():
     for link in broken_links:
         print link
 
-    print '======================== broken_links ========================'
+    print '======================== links_to_crawl ========================'
     for link in links_to_crawl:
+        print link
+
+    print '======================== links_to_other_domains ========================'
+    for link in links_to_other_domains:
         print link
 
 def visit_links(list_of_links):
