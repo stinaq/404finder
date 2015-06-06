@@ -45,3 +45,13 @@ def write_to_file(link_objects):
         #format output in columns
         file_object.write('{0:30}   {1:30}'.format(title, link['url']) + ' \n')
     file_object.close()
+
+def start (url):
+    # Starting point, at least so far
+    r = requests.get(url)
+    full_html = r.text
+    all_links = get_links.find_all_links(full_html, domain)
+
+    visit_links(all_links)
+
+start('http://stinaq.se/2015/06/en-sidan-med-massa-trasiga-lankar/')
