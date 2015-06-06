@@ -4,19 +4,31 @@ import get_links
 import datetime
 from time import gmtime, strftime
 from requests.auth import HTTPBasicAuth
+from urlparse import urlparse, urljoin
+from bs4 import BeautifulSoup
 
 broken_links = []
 links_to_crawl = []
+crawled_urls = []
 links_to_other_domains = []
-domain = 'http://stinaq.se'
+root_domain = 'http://stinaq.me/'
+
+def url_is_of_same_domain(url):
+    parsed_uri = urlparse(url)
+    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+    return True if domain == root_domain else False
 
 def print_all_the_things():
     print '======================== broken_links ========================'
     for link in broken_links:
         print link
 
-    print '======================== broken_links ========================'
+    print '======================== links_to_crawl ========================'
     for link in links_to_crawl:
+        print link
+
+    print '======================== links_to_other_domains ========================'
+    for link in links_to_other_domains:
         print link
 
 def visit_links(list_of_links):
@@ -32,7 +44,10 @@ def visit_link(link):
         if(response.status_code == 404):
             broken_links.append(link)
         if(response.status_code == 200):
-            links_to_crawl.append(link)
+            if(url_is_of_same_domain(link['url'])):
+                links_to_crawl.append(link)
+            else:
+                links_to_other_domains.append(link)
 
     except requests.exceptions.RequestException as e:
         # catastrophic error. fail.
@@ -56,19 +71,109 @@ def write_to_file(link_objects):
     file_object = open(os.path.join(dest_dir, file_name), 'a')
 
     for link in link_objects:
+        error = str(link.get('error', 'no idea'))
         #substring title 30 characters
         title = link['title'][:29]
 
         #format output in columns
-        file_object.write('{0:30}   {1:30}'.format(title, link['url']) + ' \n')
+        file_object.write('{0:30}   {1:30}'.format(title, link['url']) + error + ' \n')
     file_object.close()
 
-def start (url):
-    # Starting point, at least so far
+def make_absolute_of_relative(url, domain):
+    # If the urls are relative, they should be made absolute, using the given domain
+    if url.startswith('/'):
+        return domain + url
+    return url
+
+def find_all_links(html, origin):
+    soup = BeautifulSoup(html)
+    # Get all a tags on the given html page
+    a_tags = soup.find_all('a')
+    linkObjects = []
+    for a_tag in a_tags:
+        # Get the urls and content of the a tags and save them as object in a list
+        url = a_tag.get('href', '')
+        title = ''.join(a_tag.get_text("|", strip=True)).encode('utf-8')
+
+        absolute_url = make_absolute_of_relative(url, root_domain)
+
+        temp = {}
+        temp['url'] = absolute_url
+        temp['title'] = title
+        temp['origin'] = origin
+
+        linkObjects.append(temp)
+    return linkObjects
+
+def crawl(link):
+    url = link['url']
+    if url in crawled_urls and url in [u['url'] for u in broken_links]:
+        broken_links.append(link)
+        return
+    elif url in crawled_urls:
+        return
+
     r = requests.get(url)
-    full_html = r.text
-    all_links = get_links.find_all_links(full_html, domain)
+    if not r.ok:
+        broken_links.append(link)
+        return
 
-    visit_links(all_links)
+    crawled_urls.append(url)
+    links_to_crawl.extend(find_all_links(r.text, url))
 
-start('http://stinaq.se/2015/06/en-sidan-med-massa-trasiga-lankar/')
+def check(link):
+    try:
+        r = requests.head(link['url'])
+        if not r.ok:
+            link['error'] = r.status_code
+            broken_links.append(link)
+    except requests.exceptions.ConnectionError as e:
+        broken_links.append(link)
+
+def invalid_url(url):
+    return True if url.startswith('#') or url == '' or url.startswith('mailto') else False
+
+def validate_url(url, origin):
+    parsed = urlparse(url)
+    print '=============== url'
+    print url
+    if parsed.hostname == None:
+        print '=============== hos no hostname'
+        parsed = urlparse(urljoin(origin, parsed.path))
+    print '=============== parsed'
+    print parsed.geturl()
+    return parsed.geturl()
+
+def start ():
+    # Starting point, at least so far
+    while links_to_crawl:
+        link = links_to_crawl.pop()
+
+        url = link['url']
+        parsed_url = validate_url(url, link['origin'])
+        link['url'] = parsed_url
+
+        if invalid_url(parsed_url):
+            pass
+        elif root_domain in link['url']:
+            print 'link on same domain'
+            # print link
+            crawl(link)
+        else:
+            print 'link on another domain'
+            # print link
+            check(link)
+
+        # try:
+        # crawl(links_to_crawl.pop())
+        # except:
+            # print broken_links
+
+
+links_to_crawl.append({'url':'http://stinaq.me/','title':'','origin':'root'})
+
+try:
+    start()
+    write_to_file(broken_links)
+except AttributeError:
+    print broken_links
