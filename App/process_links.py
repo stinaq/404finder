@@ -11,7 +11,13 @@ links_to_crawl = []
 links_to_other_domains = []
 domain = 'http://stinaq.se'
 
-    for link in list_of_links:
+def print_all_the_things():
+    print '======================== broken_links ========================'
+    for link in broken_links:
+        print link
+
+    print '======================== broken_links ========================'
+    for link in links_to_crawl:
         print link
         try:
             response = requests.get(link['url'])
