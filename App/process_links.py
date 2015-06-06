@@ -4,11 +4,17 @@ import get_links
 import datetime
 from time import gmtime, strftime
 from requests.auth import HTTPBasicAuth
+from urlparse import urlparse
 
 broken_links = []
 links_to_crawl = []
 links_to_other_domains = []
 domain = 'http://stinaq.se'
+
+def url_is_of_same_domain(url):
+    parsed_uri = urlparse(url)
+    domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+    return True if domain == root_domain else False
 
 def print_all_the_things():
     print '======================== broken_links ========================'
@@ -36,8 +42,11 @@ def visit_link(link):
         if(response.status_code == 404):
             broken_links.append(link)
         if(response.status_code == 200):
-            links_to_crawl.append(link)
-
+            if(url_is_of_same_domain(link['url'])):
+                links_to_crawl.append(link)
+            else:
+                links_to_other_domains.append(link)
+            
     except requests.exceptions.RequestException as e:
         # catastrophic error. fail.
         print "It's likely that this domain doesn't exists anymore."
