@@ -2,6 +2,7 @@ import requests
 import os
 import get_links
 import datetime
+from link import Link
 from time import gmtime, strftime
 from requests.auth import HTTPBasicAuth
 from urlparse import urlparse, urljoin
@@ -11,7 +12,7 @@ broken_links = []
 links_to_crawl = []
 crawled_urls = []
 links_to_other_domains = []
-root_domain = 'http://stinaq.me/'
+root_domain = 'http://variadic.me/'
 
 def url_is_of_same_domain(url):
     parsed_uri = urlparse(url)
@@ -40,11 +41,11 @@ def visit_links(list_of_links):
 
 def visit_link(link):
     try:
-        response = requests.get(link['url'])
+        response = requests.get(link.url)
         if(response.status_code == 404):
             broken_links.append(link)
         if(response.status_code == 200):
-            if(url_is_of_same_domain(link['url'])):
+            if(url_is_of_same_domain(link.url)):
                 links_to_crawl.append(link)
             else:
                 links_to_other_domains.append(link)
@@ -55,6 +56,7 @@ def visit_link(link):
         print e
 
 def write_to_file(link_objects):
+    print 'now printing to file'
     # Getting the current directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
     dest_dir = os.path.join(script_dir, '..', 'output')
@@ -71,12 +73,12 @@ def write_to_file(link_objects):
     file_object = open(os.path.join(dest_dir, file_name), 'a')
 
     for link in link_objects:
-        error = str(link.get('error', 'no idea'))
+        error = link.error if hasattr(link, 'error') else ''
         #substring title 30 characters
-        title = link['title'][:29]
+        title = link.title[:29]
 
         #format output in columns
-        file_object.write('{0:30}   {1:30}'.format(title, link['url']) + error + ' \n')
+        file_object.write('{0:30}   {1:30}'.format(title, link.url) + error + ' \n')
     file_object.close()
 
 def make_absolute_of_relative(url, domain):
@@ -97,17 +99,14 @@ def find_all_links(html, origin):
 
         absolute_url = make_absolute_of_relative(url, root_domain)
 
-        temp = {}
-        temp['url'] = absolute_url
-        temp['title'] = title
-        temp['origin'] = origin
+        link = Link(absolute_url, title, origin)
 
-        linkObjects.append(temp)
+        linkObjects.append(link)
     return linkObjects
 
 def crawl(link):
-    url = link['url']
-    if url in crawled_urls and url in [u['url'] for u in broken_links]:
+    url = link.url
+    if url in crawled_urls and url in [u.url for u in broken_links]:
         broken_links.append(link)
         return
     elif url in crawled_urls:
@@ -123,9 +122,9 @@ def crawl(link):
 
 def check(link):
     try:
-        r = requests.head(link['url'])
+        r = requests.head(link.url)
         if not r.ok:
-            link['error'] = r.status_code
+            link.error = str(r.status_code)
             broken_links.append(link)
     except requests.exceptions.ConnectionError as e:
         broken_links.append(link)
@@ -149,13 +148,13 @@ def start ():
     while links_to_crawl:
         link = links_to_crawl.pop()
 
-        url = link['url']
-        parsed_url = validate_url(url, link['origin'])
-        link['url'] = parsed_url
+        url = link.url
+        parsed_url = validate_url(url, link.origin)
+        link.url = parsed_url
 
         if invalid_url(parsed_url):
             pass
-        elif root_domain in link['url']:
+        elif root_domain in link.url:
             print 'link on same domain'
             # print link
             crawl(link)
@@ -164,16 +163,13 @@ def start ():
             # print link
             check(link)
 
-        # try:
-        # crawl(links_to_crawl.pop())
-        # except:
-            # print broken_links
-
-
-links_to_crawl.append({'url':'http://stinaq.me/','title':'','origin':'root'})
+start_link = Link('http://variadic.me/', 'Start', 'root')
+links_to_crawl.append(start_link)
 
 try:
     start()
+    print 'out of start'
     write_to_file(broken_links)
-except AttributeError:
+except AttributeError as e:
+    print e
     print broken_links
