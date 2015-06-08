@@ -112,20 +112,35 @@ def crawl(link):
     print 'content-TYPE' + content_type
     parsed_links = find_all_links(r.text, url)
     links_to_crawl.extend(parsed_links)
-    url = link.url
-    if url in crawled_urls and url in [u.url for u in broken_links]:
-        broken_links.append(link)
-        return
-    elif url in crawled_urls:
-        return
-
 
 def check(link):
+    url = link.url
+    print 'now checking ' + link.url
+
+    # Check if the link has alreade been checked
+    if url in crawled_urls and url in [u.url for u in broken_links]:
+        broken_links.append(link)
+        print 'already crawled it, and it was broken'
+        return
+    elif url in crawled_urls:
+        print 'already crawled it'
+        return
+
     try:
-        r = requests.head(link.url)
+        crawled_urls.append(url)
+        r = requests.head(url)
+        content_type = r.headers['content-type'] if hasattr(r.headers, 'content-type') else 'text/html'
         if not r.ok:
+            print 'not OK link'
             link.error = str(r.status_code)
             broken_links.append(link)
+        else:
+            print 'OK link'
+            if root_domain in url and 'text/html' in content_type:
+                print 'in same domain, and text/html'
+                # todo, now it can check wrong here, if an external domain contains the rott domain somehow
+                crawl(link)
+
     except requests.exceptions.ConnectionError as e:
         broken_links.append(link)
 
