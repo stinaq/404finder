@@ -165,15 +165,7 @@ def start ():
         parsed_url = validate_url(url, link.origin)
         link.url = parsed_url
 
-        if invalid_url(parsed_url):
-            pass
-        elif root_domain in link.url:
-            print 'link on same domain'
-            # print link
-            crawl(link)
-        else:
-            print 'link on another domain'
-            # print link
+        if(should_be_crawled):
             check(link)
 
 start_link = Link('http://stinaq.se/', 'Start', 'root')
