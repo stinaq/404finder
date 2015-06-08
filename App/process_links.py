@@ -105,6 +105,13 @@ def find_all_links(html, origin):
     return linkObjects
 
 def crawl(link):
+    # this should also check for content type
+    url = link.url
+    r = requests.get(url)
+    content_type = r.headers['content-type'] if hasattr(r.headers, 'content-type') else ''
+    print 'content-TYPE' + content_type
+    parsed_links = find_all_links(r.text, url)
+    links_to_crawl.extend(parsed_links)
     url = link.url
     if url in crawled_urls and url in [u.url for u in broken_links]:
         broken_links.append(link)
@@ -112,13 +119,6 @@ def crawl(link):
     elif url in crawled_urls:
         return
 
-    r = requests.get(url)
-    if not r.ok:
-        broken_links.append(link)
-        return
-
-    crawled_urls.append(url)
-    links_to_crawl.extend(find_all_links(r.text, url))
 
 def check(link):
     try:
