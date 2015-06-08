@@ -12,7 +12,7 @@ broken_links = []
 links_to_crawl = []
 crawled_urls = []
 links_to_other_domains = []
-root_domain = 'http://variadic.me/'
+root_domain = 'http://stinaq.se/'
 
 def url_is_of_same_domain(url):
     parsed_uri = urlparse(url)
@@ -82,6 +82,7 @@ def write_to_file(link_objects):
     file_object.close()
 
 def make_absolute_of_relative(url, domain):
+    # todo, this should be done with urlparser instead
     # If the urls are relative, they should be made absolute, using the given domain
     if url.startswith('/'):
         return domain + url
@@ -144,7 +145,6 @@ def check(link):
     except requests.exceptions.ConnectionError as e:
         broken_links.append(link)
 
-def invalid_url(url):
     return True if url.startswith('#') or url == '' or url.startswith('mailto') else False
 
 def validate_url(url, origin):
@@ -172,7 +172,7 @@ def start ():
             # print link
             check(link)
 
-start_link = Link('http://variadic.me/', 'Start', 'root')
+start_link = Link('http://stinaq.se/', 'Start', 'root')
 links_to_crawl.append(start_link)
 
 try:
