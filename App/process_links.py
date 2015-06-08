@@ -109,8 +109,7 @@ def crawl(link):
     # this should also check for content type
     url = link.url
     r = requests.get(url)
-    content_type = r.headers['content-type'] if hasattr(r.headers, 'content-type') else ''
-    print 'content-TYPE' + content_type
+
     parsed_links = find_all_links(r.text, url)
     links_to_crawl.extend(parsed_links)
 
@@ -145,8 +144,6 @@ def check(link):
     except requests.exceptions.ConnectionError as e:
         broken_links.append(link)
 
-    return True if url.startswith('#') or url == '' or url.startswith('mailto') else False
-
 def validate_url(url, origin):
     parsed = urlparse(url)
     if parsed.hostname == None:
@@ -162,7 +159,7 @@ def start ():
         link = links_to_crawl.pop()
 
         url = link.url
-        parsed_url = validate_url(url, link.origin)
+        parsed_url, should_be_crawled = validate_url(url, link.origin)
         link.url = parsed_url
 
         if(should_be_crawled):
@@ -178,3 +175,4 @@ try:
 except AttributeError as e:
     print e
     print broken_links
+    write_to_file(broken_links)
