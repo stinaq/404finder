@@ -149,14 +149,8 @@ def invalid_url(url):
 
 def validate_url(url, origin):
     parsed = urlparse(url)
-    print '=============== url'
-    print url
     if parsed.hostname == None:
-        print '=============== hos no hostname'
         parsed = urlparse(urljoin(origin, parsed.path))
-    print '=============== parsed'
-    print parsed.geturl()
-    return parsed.geturl()
 
 def start ():
     # Starting point, at least so far
