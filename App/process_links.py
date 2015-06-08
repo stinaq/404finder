@@ -152,6 +152,10 @@ def validate_url(url, origin):
     if parsed.hostname == None:
         parsed = urlparse(urljoin(origin, parsed.path))
 
+    # The following remove lilnks such as mailto
+    should_be_crawled = True if parsed.scheme == 'http' or parsed.scheme == 'https' else False
+    return parsed.geturl(), should_be_crawled
+
 def start ():
     # Starting point, at least so far
     while links_to_crawl:
