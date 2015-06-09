@@ -2,17 +2,17 @@ import requests
 import os
 import get_links
 import datetime
-from link import Link
-from time import gmtime, strftime
-from requests.auth import HTTPBasicAuth
-from urlparse import urlparse, urljoin
-from bs4 import BeautifulSoup
+from link               import Link
+from time               import gmtime, strftime
+from requests.auth      import HTTPBasicAuth
+from urlparse           import urlparse, urljoin
+from bs4                import BeautifulSoup
 
 broken_links = []
 links_to_crawl = []
 crawled_urls = []
 links_to_other_domains = []
-root_domain = 'http://variadic.me/'
+root_domain = 'http://stinaq.se/'
 
 def url_is_of_same_domain(url):
     parsed_uri = urlparse(url)
@@ -82,6 +82,7 @@ def write_to_file(link_objects):
     file_object.close()
 
 def make_absolute_of_relative(url, domain):
+    # todo, this should be done with urlparser instead
     # If the urls are relative, they should be made absolute, using the given domain
     if url.startswith('/'):
         return domain + url
@@ -105,43 +106,54 @@ def find_all_links(html, origin):
     return linkObjects
 
 def crawl(link):
+    # this should also check for content type
     url = link.url
-    if url in crawled_urls and url in [u.url for u in broken_links]:
-        broken_links.append(link)
-        return
-    elif url in crawled_urls:
-        return
-
     r = requests.get(url)
-    if not r.ok:
-        broken_links.append(link)
-        return
 
-    crawled_urls.append(url)
-    links_to_crawl.extend(find_all_links(r.text, url))
+    parsed_links = find_all_links(r.text, url)
+    links_to_crawl.extend(parsed_links)
 
 def check(link):
+    url = link.url
+    print 'now checking ' + link.url
+
+    # Check if the link has alreade been checked
+    if url in crawled_urls and url in [u.url for u in broken_links]:
+        broken_links.append(link)
+        print 'already crawled it, and it was broken'
+        return
+    elif url in crawled_urls:
+        print 'already crawled it'
+        return
+
     try:
-        r = requests.head(link.url)
+        crawled_urls.append(url)
+        r = requests.head(url)
+
+        content_type = r.headers.get('content-type', '')
+        print 'content-type: ' + content_type
         if not r.ok:
+            print 'not OK link'
             link.error = str(r.status_code)
             broken_links.append(link)
+        else:
+            print 'OK link'
+            if root_domain in url and 'text/html' in content_type:
+                print 'in same domain, and text/html'
+                # todo, now it can check wrong here, if an external domain contains the rott domain somehow
+                crawl(link)
+
     except requests.exceptions.ConnectionError as e:
         broken_links.append(link)
 
-def invalid_url(url):
-    return True if url.startswith('#') or url == '' or url.startswith('mailto') else False
-
 def validate_url(url, origin):
     parsed = urlparse(url)
-    print '=============== url'
-    print url
     if parsed.hostname == None:
-        print '=============== hos no hostname'
         parsed = urlparse(urljoin(origin, parsed.path))
-    print '=============== parsed'
-    print parsed.geturl()
-    return parsed.geturl()
+
+    # The following remove lilnks such as mailto
+    should_be_crawled = True if parsed.scheme == 'http' or parsed.scheme == 'https' else False
+    return parsed.geturl(), should_be_crawled
 
 def start ():
     # Starting point, at least so far
@@ -149,21 +161,13 @@ def start ():
         link = links_to_crawl.pop()
 
         url = link.url
-        parsed_url = validate_url(url, link.origin)
+        parsed_url, should_be_crawled = validate_url(url, link.origin)
         link.url = parsed_url
 
-        if invalid_url(parsed_url):
-            pass
-        elif root_domain in link.url:
-            print 'link on same domain'
-            # print link
-            crawl(link)
-        else:
-            print 'link on another domain'
-            # print link
+        if(should_be_crawled):
             check(link)
 
-start_link = Link('http://variadic.me/', 'Start', 'root')
+start_link = Link('http://stinaq.se/', 'Start', 'root')
 links_to_crawl.append(start_link)
 
 try:
@@ -173,3 +177,4 @@ try:
 except AttributeError as e:
     print e
     print broken_links
+    write_to_file(broken_links)
