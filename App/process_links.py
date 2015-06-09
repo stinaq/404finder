@@ -2,11 +2,11 @@ import requests
 import os
 import get_links
 import datetime
-from link import Link
-from time import gmtime, strftime
-from requests.auth import HTTPBasicAuth
-from urlparse import urlparse, urljoin
-from bs4 import BeautifulSoup
+from link               import Link
+from time               import gmtime, strftime
+from requests.auth      import HTTPBasicAuth
+from urlparse           import urlparse, urljoin
+from bs4                import BeautifulSoup
 
 broken_links = []
 links_to_crawl = []
@@ -129,7 +129,9 @@ def check(link):
     try:
         crawled_urls.append(url)
         r = requests.head(url)
-        content_type = r.headers['content-type'] if hasattr(r.headers, 'content-type') else 'text/html'
+
+        content_type = r.headers.get('content-type', '')
+        print 'content-type: ' + content_type
         if not r.ok:
             print 'not OK link'
             link.error = str(r.status_code)
