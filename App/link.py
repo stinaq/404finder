@@ -13,7 +13,8 @@ class Link:
         self.origin = origin
 
     def __str__(self):
-        return 'url: ' + self.url + ', title: ' + self.title + ', origin: ' + self.origin
+        return 'url: ' + self.url + ', title: ' + self.title
 
     def __repr__(self):
-        return 'url: ' + self.url + ', title: ' + self.title + ', origin: ' + self.origin
+
+        return 'url: ' + self.url
