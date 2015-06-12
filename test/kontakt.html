@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Page Index</title>
+    <title>Page 2 - Kontakt</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -18,24 +18,29 @@
     <![endif]-->
   </head>
   <body>
-    <h1>Index</h1>
-    <a href="https://google.com">Länk 1 - Should work - https</a>
-    <a href="http://localhost:8000">Länk 2 - should work</a>
-    <a href="http://stinaq.se/lhklasdf">Länk 3 - should not work</a>
+    <h1>Kontakt</h1>
+    <a href=".">Länk 7</a>
+    <a href="/">Länk 8</a>
 
     <li class="page_item page-item-2477 current_page_item">
-      <a href="http://stinaq.se/portfolio/hastfolk/">Länk 4 - should work</a>
+      <a href="https://variadic.me/posts/2013-10-22-bind-call-and-apccply-in-javascript.html">Should not work</a>
     </li>
 
     <li class="page_item page-item-2477 current_page_item">
-      <a href="/mapp/test.html">Länk 5 - to sub folder</a>
-      <li class="page_item page-item-2477 current_page_item">
-        <a href="http://localhost:8000">Länk 6 - nested</a>
-      </li>
+      <a href="../test2.html">Upp ett steg</a>
+      <!-- todo, this seems to make eternal loop -->
+      <a href="test2.html">Till test2</a>
     </li>
 
-    <a href="kontakt.html">To kontakt - utan /</a>
-    <a href="/kontakt.html">To kontakt - med /</a>
+    <li class="page_item page-item-2477 current_page_item">
+        <a>Anchor with no href</a>
+    </li>
+
+    <a href="#Test">Länk 8</a>
+    <a href="mapp/test.html">Link to folder</a>
+    <a href="/mapp/test.html">Link to folder via root</a>
+
+    <h1>Test</h1>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
