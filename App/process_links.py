@@ -12,7 +12,7 @@ broken_links = []
 links_to_crawl = []
 crawled_urls = []
 links_to_other_domains = []
-root_domain = 'http://stinaq.se/'
+root_domain = 'http://localhost:8000'
 
 def url_is_of_same_domain(url):
     parsed_uri = urlparse(url)
@@ -81,11 +81,13 @@ def write_to_file(link_objects):
         file_object.write('{0:30}   {1:30}'.format(title, link.url) + error + ' \n')
     file_object.close()
 
-def make_absolute_of_relative(url, domain):
+def make_absolute_of_relative(origin, url):
     # todo, this should be done with urlparser instead
     # If the urls are relative, they should be made absolute, using the given domain
-    if url.startswith('/'):
-        return domain + url
+
+    parsed = urlparse(url)
+    if parsed.hostname == None:
+        parsed = urlparse(urljoin(origin, parsed.path))
     return url
 
 def find_all_links(html, origin):
@@ -98,7 +100,7 @@ def find_all_links(html, origin):
         url = a_tag.get('href', '')
         title = ''.join(a_tag.get_text("|", strip=True)).encode('utf-8')
 
-        absolute_url = make_absolute_of_relative(url, root_domain)
+        absolute_url = make_absolute_of_relative(origin, url)
 
         link = Link(absolute_url, title, origin)
 
@@ -111,6 +113,8 @@ def crawl(link):
     r = requests.get(url)
 
     parsed_links = find_all_links(r.text, url)
+    print 'Found these links:'
+    print parsed_links
     links_to_crawl.extend(parsed_links)
 
 def check(link):
@@ -140,34 +144,39 @@ def check(link):
             print 'OK link'
             if root_domain in url and 'text/html' in content_type:
                 print 'in same domain, and text/html'
-                # todo, now it can check wrong here, if an external domain contains the rott domain somehow
+                print 'Should now crawl this page for new links'
+                # todo, now it can check wrong here, if an external domain contains the root domain somehow
                 crawl(link)
 
     except requests.exceptions.ConnectionError as e:
         broken_links.append(link)
 
 def validate_url(url, origin):
+    print 'Validating url', url
     parsed = urlparse(url)
     if parsed.hostname == None:
         parsed = urlparse(urljoin(origin, parsed.path))
 
+    print 'New url is', parsed.geturl()
     # The following remove lilnks such as mailto
-    should_be_crawled = True if parsed.scheme == 'http' or parsed.scheme == 'https' else False
+    should_be_crawled = parsed.scheme == 'http' or parsed.scheme == 'https'
     return parsed.geturl(), should_be_crawled
 
 def start ():
     # Starting point, at least so far
     while links_to_crawl:
         link = links_to_crawl.pop()
+        print 'Now popping off a new link: ', link.url
 
         url = link.url
         parsed_url, should_be_crawled = validate_url(url, link.origin)
+        print 'Should link be crawled? ', should_be_crawled
         link.url = parsed_url
 
         if(should_be_crawled):
             check(link)
 
-start_link = Link('http://stinaq.se/', 'Start', 'root')
+start_link = Link('http://localhost:8000', 'Start', 'root')
 links_to_crawl.append(start_link)
 
 try:
