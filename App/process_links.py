@@ -19,6 +19,9 @@ def url_is_of_same_domain(url):
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     return True if domain == root_domain else False
 
+def is_absolute(url):
+    return bool(urlparse(url).netloc)
+
 def print_all_the_things():
     print '======================== broken_links ========================'
     for link in broken_links:
@@ -86,8 +89,8 @@ def make_absolute_of_relative(origin, url):
     # If the urls are relative, they should be made absolute, using the given domain
 
     parsed = urlparse(url)
-    if parsed.hostname == None:
-        parsed = urlparse(urljoin(origin, parsed.path))
+    if not is_absolute(url):
+        parsed = urlparse(urljoin(root_domain, parsed.path))
     return url
 
 def find_all_links(html, origin):
@@ -99,10 +102,7 @@ def find_all_links(html, origin):
         # Get the urls and content of the a tags and save them as object in a list
         url = a_tag.get('href', '')
         title = ''.join(a_tag.get_text("|", strip=True)).encode('utf-8')
-
-        absolute_url = make_absolute_of_relative(origin, url)
-
-        link = Link(absolute_url, title, origin)
+        link = Link(url, title, origin)
 
         linkObjects.append(link)
     return linkObjects
@@ -154,12 +154,26 @@ def check(link):
 def validate_url(url, origin):
     print 'Validating url', url
     parsed = urlparse(url)
+
     if parsed.hostname == None:
-        parsed = urlparse(urljoin(origin, parsed.path))
+        print 'no hostname'
+        print 'Link is relative'
+        if parsed.scheme == 'mailto':
+            print 'Link is a mailto'
+            should_be_crawled = False
+        else:
+            # parsed.scheme == 'http' or parsed.scheme == 'https':
+            print 'Link is a http or https'
+            should_be_crawled = True
+            parsed = urlparse(urljoin(root_domain, parsed.path))
+        # else:
+        #     print 'Link is of unknown scheme'
+        #     should_be_crawled = False
+    else:
+        should_be_crawled = True
 
     print 'New url is', parsed.geturl()
     # The following remove lilnks such as mailto
-    should_be_crawled = parsed.scheme == 'http' or parsed.scheme == 'https'
     return parsed.geturl(), should_be_crawled
 
 def start ():
