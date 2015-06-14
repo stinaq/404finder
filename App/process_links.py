@@ -163,18 +163,23 @@ def validate_url(url, origin):
             should_be_crawled = False
         else:
             # parsed.scheme == 'http' or parsed.scheme == 'https':
-            print 'Link is a http or https'
+            print 'Link is not mailto'
+            print 'origin: ' + origin
             should_be_crawled = True
-            parsed = urlparse(urljoin(root_domain, parsed.path))
+            parsed = urlparse(urljoin(origin, parsed.path))
         # else:
         #     print 'Link is of unknown scheme'
         #     should_be_crawled = False
     else:
         should_be_crawled = True
 
-    print 'New url is', parsed.geturl()
+    # By this time the url should be normalized, so all remaining ../ is not part of the path, byt will all resolve
+    # to root. So are removing them here to not make infinite loops, and the urls in crawled_urls correct
+    new_url = parsed.geturl().replace('/../', '/')
+
+    print 'New url is', new_url
     # The following remove lilnks such as mailto
-    return parsed.geturl(), should_be_crawled
+    return new_url, should_be_crawled
 
 def start ():
     # Starting point, at least so far
