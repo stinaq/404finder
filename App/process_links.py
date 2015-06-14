@@ -158,7 +158,7 @@ def validate_url(url, origin):
     if parsed.hostname == None:
         print 'no hostname'
         print 'Link is relative'
-        if parsed.scheme == 'mailto':
+        if parsed.scheme == 'mailto' or parsed.scheme == 'tel':
             print 'Link is a mailto'
             should_be_crawled = False
         else:
