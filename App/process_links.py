@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*
+
 import requests
 import os
 import get_links
 import datetime
+import output
 from link               import Link
 from time               import gmtime, strftime
 from requests.auth      import HTTPBasicAuth
@@ -201,6 +204,7 @@ links_to_crawl.append(start_link)
 try:
     start()
     print 'out of start'
+    output.output_html(broken_links)
     write_to_file(broken_links)
 except AttributeError as e:
     print e

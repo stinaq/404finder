@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}" />
+</head>
+
+<body>
+
+<div id="content">
+  <p>Greetings visitor!  These are a list of my favorite things:</p>
+
+  <table>
+    <thead>
+      <tr>
+        <td>Title</td>
+        <td>Url</td>
+        <td>Origin</td>
+      </tr>
+    </thead>
+  {% for item in list_of_links %}
+  <tbody>
+    <tr>
+      <td>{{ item.title }}</td>
+      <td>{{ item.url }}</td>
+      <td>{{ item.origin }}</td>
+    </tr>
+  </tbody>
+  {% endfor %}
+  </table>
+</div>
+
+</body>
+</html>
