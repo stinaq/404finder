@@ -84,7 +84,27 @@ def write_to_file(link_objects):
         title = link.title[:29]
 
         #format output in columns
-        file_object.write('{0:30}   {1:30}'.format(title, link.url) + error + ' \n')
+        file_object.write('{0:30}   {1:30}'.format(title.encode('utf-8'), link.url) + error + ' \n')
+    file_object.close()
+
+def write_to_file2(file_content):
+    print 'now printing to file'
+    # Getting the current directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    dest_dir = os.path.join(script_dir, '..', 'output')
+
+    # Try to open the destination directory, otherwise create it
+    try:
+        os.stat(dest_dir)
+    except:
+        os.mkdir(dest_dir)
+
+    # Create file name with date and time of now
+    file_name = strftime("%Y%m%d_%H-%M-%S", gmtime()) + '.html'
+
+    file_object = open(os.path.join(dest_dir, file_name), 'a')
+
+    file_object.write(file_content.encode('utf-8'))
     file_object.close()
 
 def make_absolute_of_relative(origin, url):
@@ -104,7 +124,7 @@ def find_all_links(html, origin):
     for a_tag in a_tags:
         # Get the urls and content of the a tags and save them as object in a list
         url = a_tag.get('href', '')
-        title = ''.join(a_tag.get_text("|", strip=True)).encode('utf-8')
+        title = ''.join(a_tag.get_text(" | ", strip=True))
         link = Link(url, title, origin)
 
         linkObjects.append(link)
@@ -198,14 +218,13 @@ def start ():
         if(should_be_crawled):
             check(link)
 
-start_link = Link('http://localhost:8000', 'Start', 'root')
-links_to_crawl.append(start_link)
-
 try:
+    start_link = Link('http://localhost:8000', 'Start', 'root')
+    links_to_crawl.append(start_link)
     start()
     print 'out of start'
-    output.output_html(broken_links)
-    write_to_file(broken_links)
+    content = output.output_html(broken_links)
+    write_to_file2(content)
 except AttributeError as e:
     print e
     print broken_links

@@ -16,5 +16,5 @@ def output_html(list_of_links):
     TEMPLATE_FILE = "template.html"
 
     template = templateEnv.get_template( TEMPLATE_FILE )
-    print template.render(templateVars)
+    return template.render(templateVars)
 
