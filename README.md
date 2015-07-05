@@ -7,7 +7,15 @@ cd [place for github repo]
 
 pip install virtualenv   
 virtualenv .   
-. bin/activate (Source\activate)s
-# (pip install requests)   
 
-pip install -r requirements.txt
+Every day setup:
+---------------
+. bin/activate  
+cd App  
+python process_links.py  
+
+
+Start simple HTTP server:
+------------------------
+cd test
+python -m SimpleHTTPServer
