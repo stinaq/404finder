@@ -38,12 +38,12 @@ def print_all_the_things():
     for link in links_to_other_domains:
         print link
 
-def visit_links(list_of_links):
-    for link in list_of_links:
-        visit_link(link)
+# def visit_links(list_of_links):
+#     for link in list_of_links:
+#         visit_link(link)
 
-    write_to_file(broken_links)
-    print_all_the_things()
+#     write_to_file(broken_links)
+#     print_all_the_things()
 
 def visit_link(link):
     try:
@@ -61,33 +61,7 @@ def visit_link(link):
         print "It's likely that this domain doesn't exists anymore."
         print e
 
-def write_to_file(link_objects):
-    print 'now printing to file'
-    # Getting the current directory
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    dest_dir = os.path.join(script_dir, '..', 'output')
-
-    # Try to open the destination directory, otherwise create it
-    try:
-        os.stat(dest_dir)
-    except:
-        os.mkdir(dest_dir)
-
-    # Create file name with date and time of now
-    file_name = strftime("%Y%m%d_%H-%M-%S", gmtime()) + '.txt'
-
-    file_object = open(os.path.join(dest_dir, file_name), 'a')
-
-    for link in link_objects:
-        error = link.error if hasattr(link, 'error') else ''
-        #substring title 30 characters
-        title = link.title[:29]
-
-        #format output in columns
-        file_object.write('{0:30}   {1:30}'.format(title.encode('utf-8'), link.url) + error + ' \n')
-    file_object.close()
-
-def write_to_file2(file_content):
+def write_to_file(file_content):
     print 'now printing to file'
     # Getting the current directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -223,9 +197,9 @@ try:
     links_to_crawl.append(start_link)
     start()
     print 'out of start'
-    content = output.output_html(broken_links)
-    write_to_file2(content)
+    content = output.create_output_html(broken_links)
+    write_to_file(content)
 except AttributeError as e:
     print e
     print broken_links
-    write_to_file(broken_links)
+    #write_to_file(broken_links)
