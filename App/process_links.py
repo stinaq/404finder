@@ -1,12 +1,11 @@
 import requests
 import os
-import get_links
 import datetime
 import output
-from link               import Link
+from App import Link
 from time               import gmtime, strftime
 from requests.auth      import HTTPBasicAuth
-from urlparse           import urlparse, urljoin
+from urllib.parse       import urlparse, urljoin
 from bs4                import BeautifulSoup
 
 broken_links = []
@@ -36,11 +35,11 @@ def visit_link(link):
 
     except requests.exceptions.RequestException as e:
         # catastrophic error. fail.
-        print "It's likely that this domain doesn't exists anymore."
-        print e
+        print("It's likely that this domain doesn't exists anymore.")
+        print(e)
 
 def write_to_file(file_content):
-    print 'now printing to file'
+    print('now printing to file')
     # Getting the current directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
     dest_dir = os.path.join(script_dir, '..', 'output')
@@ -90,21 +89,21 @@ def crawl(link):
     r = requests.get(url)
 
     parsed_links = find_all_links(r.text, url)
-    print 'Found these links:'
-    print parsed_links
+    print('Found these links:')
+    print(parsed_links)
     links_to_crawl.extend(parsed_links)
 
 def check(link):
     url = link.url
-    print 'now checking ' + link.url
+    print('now checking ' + link.url)
 
     # Check if the link has alreade been checked
     if url in crawled_urls and url in [u.url for u in broken_links]:
         broken_links.append(link)
-        print 'already crawled it, and it was broken'
+        print('already crawled it, and it was broken')
         return
     elif url in crawled_urls:
-        print 'already crawled it'
+        print('already crawled it')
         return
 
     try:
@@ -112,16 +111,16 @@ def check(link):
         r = requests.head(url)
 
         content_type = r.headers.get('content-type', '')
-        print 'content-type: ' + content_type
+        print('content-type: ' + content_type)
         if not r.ok:
-            print 'not OK link'
+            print('not OK link')
             link.error = str(r.status_code)
             broken_links.append(link)
         else:
-            print 'OK link'
+            print('OK link')
             if root_domain in url and 'text/html' in content_type:
-                print 'in same domain, and text/html'
-                print 'Should now crawl this page for new links'
+                print('in same domain, and text/html')
+                print('Should now crawl this page for new links')
                 # todo, now it can check wrong here, if an external domain contains the root domain somehow
                 crawl(link)
 
@@ -129,19 +128,19 @@ def check(link):
         broken_links.append(link)
 
 def validate_url(url, origin):
-    print 'Validating url', url
+    print('Validating url', url)
     parsed = urlparse(url)
 
     if parsed.hostname == None:
-        print 'no hostname'
-        print 'Link is relative'
+        print('no hostname')
+        print('Link is relative')
         if parsed.scheme == 'mailto' or parsed.scheme == 'tel':
-            print 'Link is a mailto'
+            print('Link is a mailto')
             should_be_crawled = False
         else:
             # parsed.scheme == 'http' or parsed.scheme == 'https':
-            print 'Link is not mailto'
-            print 'origin: ' + origin
+            print('Link is not mailto')
+            print('origin: ' + origin)
             should_be_crawled = True
             parsed = urlparse(urljoin(origin, parsed.path))
         # else:
@@ -154,7 +153,7 @@ def validate_url(url, origin):
     # to root. So are removing them here to not make infinite loops, and the urls in crawled_urls correct
     new_url = parsed.geturl().replace('/../', '/')
 
-    print 'New url is', new_url
+    print('New url is', new_url)
     # The following remove lilnks such as mailto
     return new_url, should_be_crawled
 
@@ -162,11 +161,11 @@ def start ():
     # Starting point, at least so far
     while links_to_crawl:
         link = links_to_crawl.pop()
-        print 'Now popping off a new link: ', link.url
+        print('Now popping off a new link: ', link.url)
 
         url = link.url
         parsed_url, should_be_crawled = validate_url(url, link.origin)
-        print 'Should link be crawled? ', should_be_crawled
+        print('Should link be crawled? ', should_be_crawled)
         link.url = parsed_url
 
         if(should_be_crawled):
@@ -175,10 +174,10 @@ def start ():
 try:
     links_to_crawl.append(start_link)
     start()
-    print 'out of start'
+    print('out of start')
     content = output.create_output_html(broken_links)
     write_to_file(content)
 except AttributeError as e:
-    print e
-    print broken_links
+    print(e)
+    print(broken_links)
     #write_to_file(broken_links)

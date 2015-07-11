@@ -5,7 +5,7 @@ import jinja2
 
 
 def create_output_html(list_of_links):
-    print list_of_links
+    print(list_of_links)
     templateVars = { "title" : "Test Example",
                      "description" : "A simple inquiry of function.",
                      "list_of_links" : list_of_links
