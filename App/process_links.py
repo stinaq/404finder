@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*
-
 import requests
 import os
 import get_links
@@ -16,35 +14,15 @@ links_to_crawl = []
 crawled_urls = []
 links_to_other_domains = []
 root_domain = 'http://localhost:8000'
+start_link = Link('http://localhost:8000', 'Start', 'root')
 
+# Helper function to check if a url is of the same domain as given root domain
 def url_is_of_same_domain(url):
     parsed_uri = urlparse(url)
     domain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
     return True if domain == root_domain else False
 
-def is_absolute(url):
-    return bool(urlparse(url).netloc)
-
-def print_all_the_things():
-    print '======================== broken_links ========================'
-    for link in broken_links:
-        print link
-
-    print '======================== links_to_crawl ========================'
-    for link in links_to_crawl:
-        print link
-
-    print '======================== links_to_other_domains ========================'
-    for link in links_to_other_domains:
-        print link
-
-# def visit_links(list_of_links):
-#     for link in list_of_links:
-#         visit_link(link)
-
-#     write_to_file(broken_links)
-#     print_all_the_things()
-
+# Visits a link with requests. If status code is 404
 def visit_link(link):
     try:
         response = requests.get(link.url)
@@ -90,6 +68,8 @@ def make_absolute_of_relative(origin, url):
         parsed = urlparse(urljoin(root_domain, parsed.path))
     return url
 
+# Given a string of a HTML and a link obejct from where the HTML was fetched, it returns all
+# the links on that page.
 def find_all_links(html, origin):
     soup = BeautifulSoup(html)
     # Get all a tags on the given html page
@@ -193,7 +173,6 @@ def start ():
             check(link)
 
 try:
-    start_link = Link('http://localhost:8000', 'Start', 'root')
     links_to_crawl.append(start_link)
     start()
     print 'out of start'
