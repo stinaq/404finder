@@ -2,9 +2,8 @@ import requests
 import os
 import datetime
 import output
-from App import Link
+from link import Link
 from time               import gmtime, strftime
-from requests.auth      import HTTPBasicAuth
 from urllib.parse       import urlparse, urljoin
 from bs4                import BeautifulSoup
 
@@ -54,8 +53,8 @@ def write_to_file(file_content):
     file_name = strftime("%Y%m%d_%H-%M-%S", gmtime()) + '.html'
 
     file_object = open(os.path.join(dest_dir, file_name), 'a')
-
-    file_object.write(file_content.encode('utf-8'))
+    temp = str(file_content)
+    file_object.write(temp)
     file_object.close()
 
 def make_absolute_of_relative(origin, url):
@@ -178,6 +177,7 @@ try:
     content = output.create_output_html(broken_links)
     write_to_file(content)
 except AttributeError as e:
+    print('exception')
     print(e)
     print(broken_links)
     #write_to_file(broken_links)
