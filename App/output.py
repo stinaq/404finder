@@ -2,11 +2,12 @@ from jinja2 import Environment, PackageLoader
 import jinja2
 
 
-def create_output_html(list_of_links):
+def create_output_html(list_of_links, rooturl):
     print(list_of_links)
-    templateVars = { "title" : "Test Example",
+    templateVars = { "title" : "Results of 404 finder",
                      "description" : "A simple inquiry of function.",
-                     "list_of_links" : list_of_links
+                     "list_of_links" : list_of_links,
+                     "rooturl": rooturl
                    }
 
     templateLoader = jinja2.FileSystemLoader( searchpath="." )

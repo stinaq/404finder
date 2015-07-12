@@ -175,7 +175,7 @@ try:
     links_to_crawl.append(start_link)
     start()
     print('out of start')
-    content = output.create_output_html(broken_links)
+    content = output.create_output_html(broken_links, root_domain)
     write_to_file(content)
 except AttributeError as e:
     print('exception')
