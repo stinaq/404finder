@@ -51,10 +51,8 @@ def write_to_file(file_content):
 
     # Create file name with date and time of now
     file_name = strftime("%Y%m%d_%H-%M-%S", gmtime()) + '.html'
-
-    file_object = open(os.path.join(dest_dir, file_name), 'a')
-    temp = str(file_content)
-    file_object.write(temp)
+    file_object = open(os.path.join(dest_dir, file_name), "wt", encoding="UTF-8")
+    file_object.write(file_content)
     file_object.close()
 
 def make_absolute_of_relative(origin, url):
@@ -69,7 +67,7 @@ def make_absolute_of_relative(origin, url):
 # Given a string of a HTML and a link obejct from where the HTML was fetched, it returns all
 # the links on that page.
 def find_all_links(html, origin):
-    soup = BeautifulSoup(html)
+    soup = BeautifulSoup(html, "html.parser")
     # Get all a tags on the given html page
     a_tags = soup.find_all('a')
     linkObjects = []
@@ -86,6 +84,9 @@ def crawl(link):
     # this should also check for content type
     url = link.url
     r = requests.get(url)
+
+    # Using encoding here, if not, all special characters got screwed up in the end
+    r.encoding = 'utf-8'
 
     parsed_links = find_all_links(r.text, url)
     print('Found these links:')

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*
-
 class Link:
     """A link object holds the information about links
 
