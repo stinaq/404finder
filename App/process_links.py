@@ -1,8 +1,8 @@
 import requests
 import os
-import datetime
 import output
-from link import Link
+from link               import Link
+from datetime           import datetime
 from time               import gmtime, strftime
 from urllib.parse       import urlparse, urljoin
 from bs4                import BeautifulSoup
@@ -37,6 +37,9 @@ def visit_link(link):
         print("It's likely that this domain doesn't exists anymore.")
         print(e)
 
+def create_file_name():
+    return datetime.now().strftime("%Y%m%d_%H-%M-%S") + '.html'
+
 def write_to_file(file_content):
     print('now printing to file')
     # Getting the current directory
@@ -50,7 +53,7 @@ def write_to_file(file_content):
         os.mkdir(dest_dir)
 
     # Create file name with date and time of now
-    file_name = strftime("%Y%m%d_%H-%M-%S", gmtime()) + '.html'
+    file_name = create_file_name()
     file_object = open(os.path.join(dest_dir, file_name), "wt", encoding="UTF-8")
     file_object.write(file_content)
     file_object.close()
@@ -76,7 +79,6 @@ def find_all_links(html, origin):
         url = a_tag.get('href', '')
         title = ''.join(a_tag.get_text(" | ", strip=True))
         link = Link(url, title, origin)
-
         linkObjects.append(link)
     return linkObjects
 
