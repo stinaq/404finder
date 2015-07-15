@@ -184,3 +184,7 @@ except AttributeError as e:
     print(e)
     print(broken_links)
     #write_to_file(broken_links)
+except KeyboardInterrupt as e:
+    print('Script was stoped by keyboard, printing what is gathered up until now')
+    content = output.create_output_html(broken_links, root_domain)
+    write_to_file(content)
