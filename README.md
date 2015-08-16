@@ -2,7 +2,7 @@
 
 How to set up:
 
-    choco install python2
+    choco install python3
     choco install pip
     cd [place for github repo]
 
@@ -13,7 +13,7 @@ Every day setup:
 ---------------
     . venv/bin/activate
     cd App
-    python process_links.py
+    python3 process_links.py
 
 
 Start simple HTTP server:
