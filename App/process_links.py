@@ -11,7 +11,7 @@ broken_links = []
 links_to_crawl = []
 crawled_urls = []
 links_to_other_domains = []
-root_domain = 'http://localhost:8000'
+root_domain = 'http://stinaq.me'
 start_link = Link(root_domain, 'Start', 'root')
 
 # Helper function to check if a url is of the same domain as given root domain
@@ -23,7 +23,9 @@ def url_is_of_same_domain(url):
 # Visits a link with requests. If status code is 404
 def visit_link(link):
     try:
-        response = requests.get(link.url)
+        # Sending user agent to fool some pages that don't allow requests without it
+        user_agent = {'User-agent': 'Mozilla/5.0'}
+        response = requests.get(link.url, headers = user_agent)
         if(response.status_code == 404):
             broken_links.append(link)
         if(response.status_code == 200):
@@ -59,7 +61,6 @@ def write_to_file(file_content):
     file_object.close()
 
 def make_absolute_of_relative(origin, url):
-    # todo, this should be done with urlparser instead
     # If the urls are relative, they should be made absolute, using the given domain
 
     parsed = urlparse(url)
@@ -110,7 +111,9 @@ def check(link):
 
     try:
         crawled_urls.append(url)
-        r = requests.head(url)
+        # Sending user agent to fool some pages that don't allow requests without it
+        user_agent = {'User-agent': 'Mozilla/5.0'}
+        r = requests.head(url, headers = user_agent)
 
         content_type = r.headers.get('content-type', '')
         print('content-type: ' + content_type)
