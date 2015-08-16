@@ -1,6 +1,7 @@
 # 404finder
 
 How to set up:
+
     choco install python2
     choco install pip
     cd [place for github repo]
