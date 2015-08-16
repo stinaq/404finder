@@ -12,7 +12,7 @@ links_to_crawl = []
 crawled_urls = []
 links_to_other_domains = []
 root_domain = 'http://localhost:8000'
-start_link = Link('http://localhost:8000', 'Start', 'root')
+start_link = Link(root_domain, 'Start', 'root')
 
 # Helper function to check if a url is of the same domain as given root domain
 def url_is_of_same_domain(url):
