@@ -11,7 +11,7 @@ broken_links = []
 links_to_crawl = []
 crawled_urls = []
 links_to_other_domains = []
-root_domain = 'http://stinaq.me'
+root_domain = 'http://localhost:8000'
 start_link = Link(root_domain, 'Start', 'root')
 
 # Helper function to check if a url is of the same domain as given root domain
@@ -176,11 +176,18 @@ def start ():
         if(should_be_crawled):
             check(link)
 
+def map_broken_links (broken_links):
+    for link in broken_links:
+
+        pass
+    print(broken_links)
+
 try:
     links_to_crawl.append(start_link)
     start()
     print('out of start')
     content = output.create_output_html(broken_links, root_domain)
+    map_broken_links(broken_links)
     write_to_file(content)
 except AttributeError as e:
     print('exception')
